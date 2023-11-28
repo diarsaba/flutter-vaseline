@@ -1,3 +1,4 @@
+import 'package:chatest/pages/books_page.dart';
 import 'package:chatest/pages/chat_page.dart';
 import 'package:chatest/pages/loading_page.dart';
 import 'package:chatest/pages/login_page.dart';
@@ -11,4 +12,5 @@ final Map<String, Widget Function(BuildContext)> appRoutes = {
   'login': (_) => const LoginPage(),
   'register': (_) => const RegisterPage(),
   'loading': (_) => const LoadingPage(),
+  'books': (_) => const BooksPage(),
 };

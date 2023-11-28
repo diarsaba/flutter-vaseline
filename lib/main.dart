@@ -13,7 +13,7 @@ class MainApp extends StatelessWidget {
     return  MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Transcriber',
-      initialRoute: 'login',
+      initialRoute: 'books',
       routes: appRoutes,
     );
   }
