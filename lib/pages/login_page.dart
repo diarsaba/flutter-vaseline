@@ -64,6 +64,7 @@ class __FormState extends State<_Form> {
         ButtonBlue(
             text: "Entrar",
             onPressed: () {
+              Navigator.pushNamed(context, "books");
               print(emailCtrl.text);
               print(passCtrl.text);
             })

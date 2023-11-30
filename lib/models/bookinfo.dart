@@ -1,24 +1,25 @@
-class Chapters {
+class BookInfo {
   String title;
   String description;
   String timestamp;
   //List<int> timeaverage;
+  String image;
   int words;
-  String content = "";
 
-  Chapters({
+  BookInfo({
     required this.title,
     required this.description,
     required this.timestamp,
     //required this.timeaverage,
+    required this.image,
     required this.words,
   });
 
-  Chapters.fromJson(Map<String, dynamic> json)
+  BookInfo.fromJson(Map<String, dynamic> json)
       : title = json['title'],
         description = json['description'],
+        image = json['image'],
         words = json['words'],
-        content = json['content'],
         timestamp = json['timestamp'];
 
   Map<String, dynamic> toJson() {
@@ -26,8 +27,8 @@ class Chapters {
       'title': title,
       'description': description,
       'words': words,
+      'image': image,
       'timestamp': timestamp,
-      'content': content,
     };
   }
 }

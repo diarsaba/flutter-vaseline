@@ -1,117 +1,148 @@
-
-import 'package:chatest/models/books.dart';
+import 'package:chatest/models/bookinfo.dart';
 import 'package:chatest/models/chapters.dart';
 import 'package:chatest/widgets/custom_card_chapter.dart';
+import 'package:chatest/widgets/custom_input.dart';
 import 'package:flutter/material.dart';
+import 'package:localstorage/localstorage.dart';
 
 class ChaptersPage extends StatefulWidget {
   const ChaptersPage({super.key, required this.book});
-  final BookStatus book;
+  final BookInfo book;
 
   @override
   State<ChaptersPage> createState() => _ChaptesPageState();
 }
 
 class _ChaptesPageState extends State<ChaptersPage> {
-  final chapters = [
-    ChapterStatus(
-        title: 'Colores',
-        description: 'Las ultimas faces',
-        lastedit: '3min ',
-        averagetime: '2 h/d',
-        image: 'writing-pinguin.jpg',
-        words: 100),
-    ChapterStatus(
-        title: 'Texturas',
-        description: 'Libro sobre colores',
-        lastedit: '2min ',
-        averagetime: '2 h/d',
-        image: 'writing-pinguin.jpg',
-        words: 12),
-    ChapterStatus(
-        title: 'Facetas',
-        description: 'Domde se esconden las cosas del baño',
-        lastedit: '13min ',
-        averagetime: '2 h/d',
-        image: 'writing-pinguin.jpg',
-        words: 33),
-    ChapterStatus(
-        title: 'Escrituras del Hoy y del Ayer',
-        description: 'Libro sobre colores',
-        lastedit: '3min ',
-        averagetime: '2 h/d',
-        image: 'writing-pinguin.jpg',
-        words: 4534),
-    ChapterStatus(
-        title: 'El libro del timepo',
-        description: 'Libro sobre colores',
-        lastedit: '43min ',
-        averagetime: '2 h/d',
-        image: 'writing-pinguin.jpg',
-        words: 123),
-    ChapterStatus(
-        title: 'Asi como fuere',
-        description: 'Libro sobre colores',
-        lastedit: '63min ',
-        averagetime: '2 h/d',
-        image: 'writing-pinguin.jpg',
-        words: 42),
-    ChapterStatus(
-        title: 'NO me digas mas',
-        description: 'Libro sobre colores',
-        lastedit: '23min ',
-        averagetime: '2 h/d',
-        image: 'writing-pinguin.jpg',
-        words: 12),
-    ChapterStatus(
-        title: 'Este es o no es',
-        description: 'Libro sobre colores',
-        lastedit: '23min ',
-        averagetime: '2 h/d',
-        image: 'writing-pinguin.jpg',
-        words: 312),
-    ChapterStatus(
-        title: 'Así se ven las cosas',
-        description: 'Libro sobre colores',
-        lastedit: '12min ',
-        averagetime: '2 h/d',
-        image: 'writing-pinguin.jpg',
-        words: 122),
-  ];
+  final titleCtrl = TextEditingController();
+  final descriptionCtrl = TextEditingController();
+  final LocalStorage storage = LocalStorage('chapters_info.json');
+  List<Chapters> chapters = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.book.title),
+        title: Text('· ${widget.book.title}'),
         elevation: 1,
         backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_outlined),
           onPressed: () {
-            Navigator.pushNamed(context, "users");
+            Navigator.pushNamed(context, "books");
           },
         ),
         actions: [
           Container(
               margin: const EdgeInsets.only(right: 10),
               child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  setState(() {});
+                },
                 icon: const Icon(Icons.sort_outlined),
               ))
         ],
       ),
-      body: _TestList(),
+      body: FutureBuilder(
+        future: storage.ready,
+        builder: (_, AsyncSnapshot snapshot) {
+          var items = storage.getItem('${widget.book.title}_chapters_');
+
+          if (items != null) {
+            chapters = List<Chapters>.from(
+              (items as List).map(
+                (item) => Chapters.fromJson(item),
+              ),
+            );
+          }
+          return chapters.isNotEmpty ? _chapterList() : _iconCenter();
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Nuevo Capitulo'),
+              content: SizedBox(
+                height: 150,
+                child: Column(
+                  children: [
+                    CustomInput(
+                        icon: Icons.title_outlined,
+                        placeholder: "Nombre del Capitulo",
+                        textcontroller: titleCtrl),
+                    CustomInput(
+                        icon: Icons.description_outlined,
+                        placeholder: "De que trata?",
+                        textcontroller: descriptionCtrl),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Cancel'),
+                  //child: const Text('Descartar'),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.highlight_remove_outlined),
+                      Text(" · Descartar")
+                    ],
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, 'OK');
+                    chapters.add(
+                      Chapters(
+                          title: titleCtrl.text,
+                          description: descriptionCtrl.text,
+                          timestamp: DateTime.timestamp().toString(),
+                          //timeaverage: [],
+                          words: 0),
+                    );
+                    var list = chapters.map((item) {
+                      return item.toJson();
+                    }).toList();
+
+                    storage.setItem('${widget.book.title}_chapters_', list);
+
+                    titleCtrl.clear();
+                    descriptionCtrl.clear();
+
+                    setState(() {});
+                  },
+                  child: const Row(
+                    children: [Icon(Icons.save_outlined), Text(" · Guardar")],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+        tooltip: "Listen",
+        backgroundColor: const Color.fromARGB(255, 157, 210, 159),
+        child: const Icon(Icons.add),
+      ),
     );
   }
 
-  ListView _TestList() {
+  ListView _chapterList() {
     return ListView.builder(
       itemBuilder: (_, i) => CardChapter(
         chapter: chapters[i],
       ),
       itemCount: chapters.length,
-      reverse: true,
+    );
+  }
+
+  Center _iconCenter() {
+    return const Center(
+      child: Icon(
+        Icons.book,
+        size: 200,
+        color: Colors.black38,
+      ),
     );
   }
 

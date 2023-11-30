@@ -1,10 +1,10 @@
-import 'package:chatest/models/books.dart';
+import 'package:chatest/models/bookinfo.dart';
 import 'package:chatest/pages/book_chapters_page.dart';
 
 import 'package:flutter/material.dart';
 
 class CardBooks extends StatelessWidget {
-  final BookStatus book;
+  final BookInfo book;
 
   const CardBooks({super.key, required this.book});
 
@@ -44,8 +44,8 @@ class CardBooks extends StatelessWidget {
                   '"${book.description}"',
                   style: const TextStyle(fontStyle: FontStyle.italic),
                 ),
-                Text('Ultima vez editado, hace ${book.lastedit}'),
-                Text('${book.averagetime} dedicada en promedio'),
+                // Text('Ultima vez editado, hace ${book.timestamp}'),
+                // Text('${book.timeaverage} dedicada en promedio'),
                 Text('${book.words} palabras en total'),
               ],
             ),
