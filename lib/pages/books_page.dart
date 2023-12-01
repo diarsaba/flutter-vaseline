@@ -1,6 +1,8 @@
 import 'package:chatest/models/bookinfo.dart';
 import 'package:chatest/widgets/custom_card_books.dart';
 import 'package:chatest/widgets/custom_input.dart';
+import 'package:chatest/widgets/custom_list_dismiss.dart';
+import 'package:chatest/widgets/custom_show_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 
@@ -25,19 +27,24 @@ class _UsersPageState extends State<BooksPage> {
         title: const Text("Libros"),
         elevation: 1,
         backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.logout_outlined),
+        leading: TextButton(
           onPressed: () {
             Navigator.pushNamed(context, "login");
           },
+          child: Text(
+            "salir",
+            style: TextStyle(color: Colors.blue[400]),
+          ),
         ),
         actions: [
           Container(
-            margin: const EdgeInsets.only(right: 10),
-            child: const Icon(
-              Icons.settings_outlined,
-            ),
-          )
+              margin: const EdgeInsets.only(right: 10),
+              child: IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.settings_outlined,
+                ),
+              ))
         ],
       ),
       body: FutureBuilder(
@@ -52,7 +59,43 @@ class _UsersPageState extends State<BooksPage> {
               ),
             );
           }
-          return books.isNotEmpty ? _itemsList() : _iconCenter();
+          return books.isNotEmpty
+              ? ListDismiss(
+                  rightIcon: const Icon(
+                    Icons.delete_rounded,
+                    size: 40,
+                    color: Colors.red,
+                  ),
+                  leftIcon: const Icon(
+                    Icons.archive_outlined,
+                    size: 40,
+                    color: Colors.green,
+                  ),
+                  onRight: (i) {
+                    showDialogSimple(
+                        context,
+                        "¿Eliminar?",
+                        books[i].title,
+                        () {
+                          setState(() {});
+                        },
+                        "No",
+                        () {
+                          books.removeAt(i);
+                          saveBooks();
+                          setState(() {});
+                        },
+                        "Si");
+                  },
+                  onLeft: (i) {
+                    showDialogSimple(context, "¿Archivar?", books[i].title,
+                        () {}, "No", () {}, "Si");
+                  },
+                  childIndex: (i) {
+                    return CardBooks(book: books[i]);
+                  },
+                  list: books)
+              : _iconCenter();
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -99,11 +142,8 @@ class _UsersPageState extends State<BooksPage> {
                           image: 'speech-pinguin.jpg',
                           words: 0),
                     );
-                    var list = books.map((item) {
-                      return item.toJson();
-                    }).toList();
 
-                    storage.setItem("_book_list_", list);
+                    saveBooks();
 
                     titleCtrl.clear();
                     descriptionCtrl.clear();
@@ -125,15 +165,6 @@ class _UsersPageState extends State<BooksPage> {
     );
   }
 
-  ListView _itemsList() {
-    return ListView.builder(
-      itemBuilder: (_, i) => CardBooks(
-        book: books[i],
-      ),
-      itemCount: books.length,
-    );
-  }
-
   Center _iconCenter() {
     return const Center(
       child: Icon(
@@ -142,5 +173,13 @@ class _UsersPageState extends State<BooksPage> {
         color: Colors.black38,
       ),
     );
+  }
+
+  void saveBooks() {
+    var list = books.map((item) {
+      return item.toJson();
+    }).toList();
+
+    storage.setItem("_book_list_", list);
   }
 }

@@ -27,8 +27,8 @@ class _ChatPageState extends State<SpeechPage> {
   String _wordsSpoken = "";
 
   List<String> paragraphs = [];
-  int paragraphs_len = 0;
-  bool isEdited = false;
+
+  int isOnListen = 0;
 
   @override
   void initState() {
@@ -48,8 +48,26 @@ class _ChatPageState extends State<SpeechPage> {
   void _startListening() async {
     await _speech.listen(onResult: _onSpeechResult);
     paragraphs.add("");
-
+    isOnListen += 1;
+    autoSave();
     setState(() {});
+  }
+
+  void autoSave() async {
+    await Future.delayed(const Duration(seconds: 2), () async {
+      if (_speech.isListening == false) {
+        isOnListen = 0;
+        //vamos a guardar
+        await storage.setItem('${chapter.title}_paragraph', paragraphs);
+      } else if (isOnListen > 1) {
+        //Hubo un solapamiento
+        //hay que guardar
+        print("El solapamiento es real");
+        autoSave();
+      } else {
+        autoSave();
+      }
+    });
   }
 
   void _stopListening() async {
@@ -60,14 +78,7 @@ class _ChatPageState extends State<SpeechPage> {
   void _onSpeechResult(result) {
     _wordsSpoken = "${result.recognizedWords}";
     paragraphs.last = _wordsSpoken;
-    isEdited = true;
     setState(() {});
-  }
-
-  void _saveData() async {
-    if (paragraphs_len != paragraphs.length || isEdited == true) {
-      await storage.setItem('${chapter.title}_paragraph', paragraphs);
-    }
   }
 
   @override
@@ -78,7 +89,6 @@ class _ChatPageState extends State<SpeechPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_outlined),
           onPressed: () {
-            _saveData();
             Navigator.pop(context);
           },
         ),
@@ -95,7 +105,6 @@ class _ChatPageState extends State<SpeechPage> {
                 ),
               );
             }
-            paragraphs_len = paragraphs.length;
           }
 
           return paragraphs.isNotEmpty ? _paragraphList() : _iconCenter();
@@ -120,27 +129,20 @@ class _ChatPageState extends State<SpeechPage> {
 
   ListView _paragraphList() {
     return ListView.builder(
+      itemCount: paragraphs.length,
       itemBuilder: (context, i) {
-        final item = paragraphs[i];
         return Dismissible(
-          key: Key(item.toString()),
-          onDismissed: (direction) {
-            setState(() {
-              paragraphs.removeAt(i);
-              isEdited = true;
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(' dismissed'),
-              ),
-            );
-          },
+          background: Container(
+            color: Colors.red,
+            child: const Icon(Icons.delete),
+          ),
+          key: UniqueKey(),
+          onDismissed: (direction) => deleteConfirmation(i),
           child: Paragraph(
             paragraph: paragraphs[i],
           ),
         );
       },
-      itemCount: paragraphs.length,
     );
   }
 
@@ -150,6 +152,38 @@ class _ChatPageState extends State<SpeechPage> {
         Icons.text_rotation_angleup_outlined,
         size: 200,
         color: Colors.black38,
+      ),
+    );
+  }
+
+  void deleteConfirmation(int index) {
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('¿Eliminar?'),
+        content: SizedBox(
+          height: 150,
+          child: Text(paragraphs[index]),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Row(
+              children: [Icon(Icons.cancel_outlined), Text("NO")],
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              paragraphs.removeAt(index);
+              autoSave();
+              setState(() {});
+            },
+            child: const Row(
+              children: [Icon(Icons.save_outlined), Text("SI")],
+            ),
+          ),
+        ],
       ),
     );
   }

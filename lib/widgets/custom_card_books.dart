@@ -19,41 +19,84 @@ class CardBooks extends StatelessWidget {
                         book: book,
                       )));
         },
-        child: Card(
-          clipBehavior: Clip.antiAliasWithSaveLayer,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          elevation: 5,
-          margin:
-              const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
+        child: SizedBox(
+          width: double.infinity,
           child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              children: [
-                Image.asset(
-                  'assets/${book.image}',
-                  fit: BoxFit.scaleDown,
-                  height: 200,
-                ),
-                Text(
-                  book.title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  '"${book.description}"',
-                  style: const TextStyle(fontStyle: FontStyle.italic),
-                ),
-                // Text('Ultima vez editado, hace ${book.timestamp}'),
-                // Text('${book.timeaverage} dedicada en promedio'),
-                Text('${book.words} palabras en total'),
-              ],
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Image.asset(
+                      'assets/speech-pinguin.jpg',
+                      fit: BoxFit.scaleDown,
+                      height: 150,
+                    ),
+                  ),
+                  Center(
+                    child: Column(
+                      children: [
+                        Text(
+                          book.title,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          '"${book.description}"',
+                          style: const TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                        // Text('Ultima vez editado, hace ${book.timestamp}'),
+                        // Text('${book.timeaverage} dedicada en promedio'),
+                        Text('${book.words} palabras en total'),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ));
   }
 }
 
+
+                
+
+// Card(
+//           clipBehavior: Clip.antiAliasWithSaveLayer,
+//           shape: RoundedRectangleBorder(
+//             borderRadius: BorderRadius.circular(10.0),
+//           ),
+//           elevation: 5,
+//           margin:
+//               const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
+//           child: Padding(
+//             padding: const EdgeInsets.all(10),
+//             child: Column(
+//               children: [
+//                 Image.asset(
+//                   'assets/${book.image}',
+//                   fit: BoxFit.scaleDown,
+//                   height: 200,
+//                 ),
+//                 Text(
+//                   book.title,
+//                   style: const TextStyle(fontWeight: FontWeight.bold),
+//                 ),
+//                 Text(
+//                   '"${book.description}"',
+//                   style: const TextStyle(fontStyle: FontStyle.italic),
+//                 ),
+//                 // Text('Ultima vez editado, hace ${book.timestamp}'),
+//                 // Text('${book.timeaverage} dedicada en promedio'),
+//                 Text('${book.words} palabras en total'),
+//               ],
+//             ),
+//           ),
+//         )
 // Card(
 //             child: Container(
 //               height: 100,

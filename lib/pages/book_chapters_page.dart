@@ -2,6 +2,8 @@ import 'package:chatest/models/bookinfo.dart';
 import 'package:chatest/models/chapters.dart';
 import 'package:chatest/widgets/custom_card_chapter.dart';
 import 'package:chatest/widgets/custom_input.dart';
+import 'package:chatest/widgets/custom_list_dismiss.dart';
+import 'package:chatest/widgets/custom_show_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 
@@ -29,7 +31,7 @@ class _ChaptesPageState extends State<ChaptersPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_outlined),
           onPressed: () {
-            Navigator.pushNamed(context, "books");
+            Navigator.pop(context);
           },
         ),
         actions: [
@@ -55,7 +57,43 @@ class _ChaptesPageState extends State<ChaptersPage> {
               ),
             );
           }
-          return chapters.isNotEmpty ? _chapterList() : _iconCenter();
+          return chapters.isNotEmpty
+              ? ListDismiss(
+                  rightIcon: const Icon(
+                    Icons.delete_rounded,
+                    size: 40,
+                    color: Colors.red,
+                  ),
+                  leftIcon: const Icon(
+                    Icons.archive_outlined,
+                    size: 40,
+                    color: Colors.green,
+                  ),
+                  onRight: (i) {
+                    showDialogSimple(
+                        context,
+                        "¿Eliminar?",
+                        chapters[i].title,
+                        () {
+                          setState(() {});
+                        },
+                        "No",
+                        () {
+                          chapters.removeAt(i);
+                          saveChapters();
+                          setState(() {});
+                        },
+                        "Si");
+                  },
+                  onLeft: (i) {
+                    showDialogSimple(context, "¿Archivar?", chapters[i].title,
+                        () {}, "No", () {}, "Si");
+                  },
+                  childIndex: (i) {
+                    return CardChapter(chapter: chapters[i]);
+                  },
+                  list: chapters)
+              : _iconCenter();
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -101,12 +139,8 @@ class _ChaptesPageState extends State<ChaptersPage> {
                           //timeaverage: [],
                           words: 0),
                     );
-                    var list = chapters.map((item) {
-                      return item.toJson();
-                    }).toList();
 
-                    storage.setItem('${widget.book.title}_chapters_', list);
-
+                    saveChapters();
                     titleCtrl.clear();
                     descriptionCtrl.clear();
 
@@ -127,15 +161,6 @@ class _ChaptesPageState extends State<ChaptersPage> {
     );
   }
 
-  ListView _chapterList() {
-    return ListView.builder(
-      itemBuilder: (_, i) => CardChapter(
-        chapter: chapters[i],
-      ),
-      itemCount: chapters.length,
-    );
-  }
-
   Center _iconCenter() {
     return const Center(
       child: Icon(
@@ -146,28 +171,11 @@ class _ChaptesPageState extends State<ChaptersPage> {
     );
   }
 
-  // ListView _ListViewUsers() {
-  //   return ListView.separated(
-  //       physics: BouncingScrollPhysics(),
-  //       itemBuilder: (_, i) => _userListTile(usuarios[i]),
-  //       separatorBuilder: (_, i) => Divider(),
-  //       itemCount: usuarios.length);
-  // }
+  void saveChapters() {
+    var list = chapters.map((item) {
+      return item.toJson();
+    }).toList();
 
-  // ListTile _userListTile(Usuario user) {
-  //   return ListTile(
-  //     title: Text(user.nombre),
-  //     subtitle: Text(user.email),
-  //     leading: CircleAvatar(
-  //       child: Text(user.nombre.substring(0, 2)),
-  //     ),
-  //     trailing: Container(
-  //       width: 10,
-  //       height: 10,
-  //       decoration: BoxDecoration(
-  //           color: user.online ? Colors.green[300] : Colors.red,
-  //           borderRadius: BorderRadius.circular(100)),
-  //     ),
-  //   );
-  // }
+    storage.setItem('${widget.book.title}_chapters_', list);
+  }
 }
