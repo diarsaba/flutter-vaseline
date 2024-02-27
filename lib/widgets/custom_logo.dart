@@ -7,18 +7,16 @@ class Logo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Container(
-        child: Column(
-          children: [
-            Image(
-              image: AssetImage('assets/speech-pinguin.jpg'),
-            ),
-            Text(
-              this.title,
-              style: TextStyle(fontSize: 30),
-            )
-          ],
-        ),
+      child: Column(
+        children: [
+          const Image(
+            image: AssetImage('assets/speech-pinguin.jpg'),
+          ),
+          Text(
+            title,
+            style: const TextStyle(fontSize: 30),
+          )
+        ],
       ),
     );
   }

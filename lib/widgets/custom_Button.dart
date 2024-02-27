@@ -11,8 +11,8 @@ class ButtonBlue extends StatelessWidget {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
           backgroundColor: Colors.blue, foregroundColor: Colors.white),
-      onPressed: this.onPressed,
-      child: Text(this.text),
+      onPressed: onPressed,
+      child: Text(text),
     );
   }
 }

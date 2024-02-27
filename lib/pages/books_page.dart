@@ -1,6 +1,6 @@
 import 'package:chatest/models/bookinfo.dart';
+import 'package:chatest/widgets/custom_alert.dart';
 import 'package:chatest/widgets/custom_card_books.dart';
-import 'package:chatest/widgets/custom_input.dart';
 import 'package:chatest/widgets/custom_list_dismiss.dart';
 import 'package:chatest/widgets/custom_show_dialog.dart';
 import 'package:flutter/material.dart';
@@ -14,9 +14,8 @@ class BooksPage extends StatefulWidget {
 }
 
 class _UsersPageState extends State<BooksPage> {
-  final titleCtrl = TextEditingController();
-  final descriptionCtrl = TextEditingController();
   final LocalStorage storage = LocalStorage('books_info.json');
+
   List<BookInfo> books = [];
 
   @override
@@ -61,6 +60,7 @@ class _UsersPageState extends State<BooksPage> {
           }
           return books.isNotEmpty
               ? ListDismiss(
+                  reverse: false,
                   rightIcon: const Icon(
                     Icons.delete_rounded,
                     size: 40,
@@ -91,6 +91,7 @@ class _UsersPageState extends State<BooksPage> {
                     showDialogSimple(context, "¿Archivar?", books[i].title,
                         () {}, "No", () {}, "Si");
                   },
+                  direction: DismissDirection.startToEnd,
                   childIndex: (i) {
                     return CardBooks(book: books[i]);
                   },
@@ -101,68 +102,35 @@ class _UsersPageState extends State<BooksPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog<String>(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-              title: const Text('Nuevo Libro'),
-              content: SizedBox(
-                height: 150,
-                child: Column(
-                  children: [
-                    CustomInput(
-                        icon: Icons.title_outlined,
-                        placeholder: "Nombre del Libro",
-                        textcontroller: titleCtrl),
-                    CustomInput(
-                        icon: Icons.description_outlined,
-                        placeholder: "De que trata?",
-                        textcontroller: descriptionCtrl),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () => Navigator.pop(context, 'Cancel'),
-                  //child: const Text('Descartar'),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.highlight_remove_outlined),
-                      Text(" · Descartar")
-                    ],
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context, 'OK');
-                    books.add(
-                      BookInfo(
-                          title: titleCtrl.text,
-                          description: descriptionCtrl.text,
-                          timestamp: DateTime.timestamp().toString(),
-                          //timeaverage: [],
-                          image: 'speech-pinguin.jpg',
-                          words: 0),
-                    );
-
-                    saveBooks();
-
-                    titleCtrl.clear();
-                    descriptionCtrl.clear();
-
-                    setState(() {});
-                  },
-                  child: const Row(
-                    children: [Icon(Icons.save_outlined), Text(" · Guardar")],
-                  ),
-                ),
-              ],
-            ),
-          );
+              context: context,
+              builder: (BuildContext context) => AlertDialogS(
+                    onConfirm: _confirmFloatButton,
+                    title: "Titulo nuevo",
+                    placeholder1: "Titulo",
+                    placeholder2: "Descripción",
+                  ));
         },
         tooltip: "Listen",
         backgroundColor: const Color.fromARGB(255, 157, 210, 159),
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  void _confirmFloatButton(String title, String description) {
+    books.add(
+      BookInfo(
+          title: title,
+          description: description,
+          timestamp: DateTime.timestamp().toString(),
+          //timeaverage: [],
+          image: 'speech-pinguin.jpg',
+          words: 0),
+    );
+
+    saveBooks();
+
+    setState(() {});
   }
 
   Center _iconCenter() {

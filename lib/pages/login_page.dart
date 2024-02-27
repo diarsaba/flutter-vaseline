@@ -13,20 +13,18 @@ class LoginPage extends StatelessWidget {
         backgroundColor: const Color(0xffF2F2F2),
         body: SafeArea(
           child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            child: Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Logo(title: "Login",),
-                  _Form(),
-                  Labels(ruta: 'register',title: '¿Quieres crear una cuenta?',subtitle: '¡Crear Ahora!',),
-                  Text(
-                    "Terminos y condiciones",
-                    style: TextStyle(fontWeight: FontWeight.w200),
-                  )
-                ],
-              ),
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Logo(title: "Login",),
+                _Form(),
+                const Labels(ruta: 'register',title: '¿Quieres crear una cuenta?',subtitle: '¡Crear Ahora!',),
+                const Text(
+                  "Terminos y condiciones",
+                  style: TextStyle(fontWeight: FontWeight.w200),
+                )
+              ],
             ),
           ),
         ));
@@ -45,8 +43,8 @@ class __FormState extends State<_Form> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 0),
-      padding: EdgeInsets.symmetric(horizontal: 50),
+      margin: const EdgeInsets.only(top: 0),
+      padding: const EdgeInsets.symmetric(horizontal: 50),
       child: Column(children: [
         CustomInput(
           icon: Icons.email_outlined,

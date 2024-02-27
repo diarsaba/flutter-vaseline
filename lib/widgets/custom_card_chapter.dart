@@ -23,9 +23,9 @@ class CardChapter extends StatelessWidget {
           child: Card(
             clipBehavior: Clip.antiAliasWithSaveLayer,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(5),
             ),
-            elevation: 5,
+            
             margin:
                 const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
             child: Padding(

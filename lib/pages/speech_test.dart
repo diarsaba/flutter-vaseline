@@ -14,15 +14,13 @@ class SpeechSampleApp extends StatefulWidget {
 
   @override
   State<SpeechSampleApp> createState() =>
-      _SpeechSampleAppState(chapter: chapter);
+      _SpeechSampleAppState();
 }
 
 /// An example that demonstrates the basic functionality of the
 /// SpeechToText plugin for using the speech recognition capability
 /// of the underlying platform.
 class _SpeechSampleAppState extends State<SpeechSampleApp> {
-  final Chapters chapter;
-  _SpeechSampleAppState({required this.chapter});
 
   String pulsar = "";
 
@@ -47,7 +45,7 @@ class _SpeechSampleAppState extends State<SpeechSampleApp> {
   void initState() {
     super.initState();
     initSpeechState();
-    pulsar = chapter.title;
+    pulsar = widget.chapter.title;
   }
 
   /// This initializes SpeechToText. That only has to be done
@@ -88,7 +86,7 @@ class _SpeechSampleAppState extends State<SpeechSampleApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('@ ${chapter.title}'),
+          title: Text('@ ${widget.chapter.title}'),
         ),
         body: Column(children: [
           const HeaderWidget(),
@@ -187,7 +185,7 @@ class _SpeechSampleAppState extends State<SpeechSampleApp> {
 
   void errorListener(SpeechRecognitionError error) {
     print(
-        'Received error status: $error, listening: ${speech.isListening} ${chapter.title} ${pulsar}');
+        'Received error status: $error, listening: ${speech.isListening} ${widget.chapter.title} ${pulsar}');
     setState(() {
       lastError = '${error.errorMsg} - ${error.permanent}';
     });
@@ -195,7 +193,7 @@ class _SpeechSampleAppState extends State<SpeechSampleApp> {
 
   void statusListener(String status) {
     print(
-        'Received listener status: $status, listening: ${speech.isListening} ${chapter.title} :_> ${pulsar}');
+        'Received listener status: $status, listening: ${speech.isListening} ${widget.chapter.title} :_> ${pulsar}');
     setState(() {
       lastStatus = status;
     });

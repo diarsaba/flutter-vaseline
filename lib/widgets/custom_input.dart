@@ -6,14 +6,15 @@ class CustomInput extends StatelessWidget {
   final TextEditingController textcontroller;
   final TextInputType keyboardType;
   final bool isPassword;
-
+  final Function(String)? onChanged;
   const CustomInput(
       {super.key,
       required this.icon,
       required this.placeholder,
       required this.textcontroller,
       this.keyboardType = TextInputType.text,
-      this.isPassword = false});
+      this.isPassword = false,
+      this.onChanged });
 
   @override
   Widget build(BuildContext context) {
@@ -30,15 +31,16 @@ class CustomInput extends StatelessWidget {
                 blurRadius: 5)
           ]),
       child: TextField(
-        controller: this.textcontroller,
+        onChanged: onChanged,
+        controller: textcontroller,
         autocorrect: false,
-        keyboardType: this.keyboardType,
-        obscureText: this.isPassword,
+        keyboardType: keyboardType,
+        obscureText: isPassword,
         decoration: InputDecoration(
-            prefixIcon: Icon(this.icon),
+            prefixIcon: Icon(icon),
             focusedBorder: InputBorder.none,
             border: InputBorder.none,
-            hintText: this.placeholder),
+            hintText: placeholder),
       ),
     );
   }

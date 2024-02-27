@@ -1,7 +1,7 @@
 import 'package:chatest/models/bookinfo.dart';
 import 'package:chatest/models/chapters.dart';
+import 'package:chatest/widgets/custom_alert.dart';
 import 'package:chatest/widgets/custom_card_chapter.dart';
-import 'package:chatest/widgets/custom_input.dart';
 import 'package:chatest/widgets/custom_list_dismiss.dart';
 import 'package:chatest/widgets/custom_show_dialog.dart';
 import 'package:flutter/material.dart';
@@ -59,6 +59,7 @@ class _ChaptesPageState extends State<ChaptersPage> {
           }
           return chapters.isNotEmpty
               ? ListDismiss(
+                reverse: false,
                   rightIcon: const Icon(
                     Icons.delete_rounded,
                     size: 40,
@@ -85,6 +86,7 @@ class _ChaptesPageState extends State<ChaptersPage> {
                         },
                         "Si");
                   },
+                  direction: DismissDirection.startToEnd,
                   onLeft: (i) {
                     showDialogSimple(context, "¿Archivar?", chapters[i].title,
                         () {}, "No", () {}, "Si");
@@ -99,66 +101,33 @@ class _ChaptesPageState extends State<ChaptersPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog<String>(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-              title: const Text('Nuevo Capitulo'),
-              content: SizedBox(
-                height: 150,
-                child: Column(
-                  children: [
-                    CustomInput(
-                        icon: Icons.title_outlined,
-                        placeholder: "Nombre del Capitulo",
-                        textcontroller: titleCtrl),
-                    CustomInput(
-                        icon: Icons.description_outlined,
-                        placeholder: "De que trata?",
-                        textcontroller: descriptionCtrl),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () => Navigator.pop(context, 'Cancel'),
-                  //child: const Text('Descartar'),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.highlight_remove_outlined),
-                      Text(" · Descartar")
-                    ],
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context, 'OK');
-                    chapters.add(
-                      Chapters(
-                          title: titleCtrl.text,
-                          description: descriptionCtrl.text,
-                          timestamp: DateTime.timestamp().toString(),
-                          //timeaverage: [],
-                          words: 0),
-                    );
-
-                    saveChapters();
-                    titleCtrl.clear();
-                    descriptionCtrl.clear();
-
-                    setState(() {});
-                  },
-                  child: const Row(
-                    children: [Icon(Icons.save_outlined), Text(" · Guardar")],
-                  ),
-                ),
-              ],
-            ),
-          );
+              context: context,
+              builder: (BuildContext context) => AlertDialogS(
+                  onConfirm: _confirmFloatButton,
+                  title: "Nuevo Capitulo",
+                  placeholder1: "Titulo",
+                  placeholder2: "Descripcion"));
         },
         tooltip: "Listen",
         backgroundColor: const Color.fromARGB(255, 157, 210, 159),
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  void _confirmFloatButton(String title, String description) {
+    chapters.add(
+      Chapters(
+          title: title,
+          description: description,
+          timestamp: DateTime.timestamp().toString(),
+          //timeaverage: [],
+          words: 0),
+    );
+
+    saveChapters();
+
+    setState(() {});
   }
 
   Center _iconCenter() {

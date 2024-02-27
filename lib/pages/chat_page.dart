@@ -1,6 +1,4 @@
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
+import 'package:chatest/widgets/custom_sound_wave.dart';
 import 'package:flutter/material.dart';
 
 class ChatPage extends StatefulWidget {
@@ -11,91 +9,69 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  final _textController = new TextEditingController();
-  final _focusNode = new FocusNode();
+  List<String> paragraphs = [];
+
+  int isOnListen = 0;
+  final SoundWaveController soundController = SoundWaveController();
+
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.purple[100],
-        title: const Column(
-          children: [
-            CircleAvatar(
-              child: Text(
-                "TE",
-                style: TextStyle(fontSize: 12),
-              ),
-            ),
-            SizedBox(
-              height: 3,
-            ),
-            Text(
-              "Melisa",
-              style: TextStyle(color: Colors.black87, fontSize: 12),
-            )
-          ],
+        appBar: AppBar(
+          title: const Text("tester"),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_outlined),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
-      ),
-      body: Container(
-        child: Column(
+        body: Column(
           children: [
-            Flexible(
-              child: ListView.builder(
-                physics: BouncingScrollPhysics(),
-                itemBuilder: (_, i) => Text('${i}'),
-                reverse: true,
-              ),
+            Expanded(child: _iconCenter()
+                //buildMessageTextField()
+                ),
+            SoundWave(
+              onStartRecord: () {
+                print("record");
+              },
+              onStopRecord: () {
+                soundController.resetAnimation();
+              },
+              controller: soundController,
             ),
-            Divider(
-              height: 1,
-            ),
-            Container(
-              color: Colors.white,
-              child: _inputChat(),
-            )
           ],
-        ),
+        )
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: _speech.isListening ? _stopListening : _startListening,
+        //   tooltip: "Listen",
+        //   backgroundColor: _speechEnabled
+        //       ? _speech.isNotListening
+        //           ? Colors.green
+        //           : Colors.red
+        //       : Colors.black12,
+        //   child: Icon(_speechEnabled
+        //       ? _speech.isNotListening
+        //           ? Icons.mic_outlined
+        //           : Icons.stop_outlined
+        //       : Icons.mic_off),
+        // ),
+        );
+  }
+
+  Center _iconCenter() {
+    return const Center(
+      child: Icon(
+        Icons.text_rotation_angleup_outlined,
+        size: 200,
+        color: Colors.black38,
       ),
     );
-  }
-
-  Widget _inputChat() {
-    return SafeArea(
-        child: Container(
-      margin: EdgeInsets.symmetric(horizontal: 8),
-      child: Row(
-        children: [
-          Flexible(
-              child: TextField(
-            controller: _textController,
-            onSubmitted: _handleSubmit,
-            onChanged: (String text) {},
-            decoration: InputDecoration.collapsed(hintText: "Escribe"),
-            focusNode: _focusNode,
-          )),
-          Container(
-              margin: EdgeInsets.symmetric(horizontal: 4),
-              child: Platform.isIOS
-                  ? CupertinoButton(child: Text('Enviar'), onPressed: () {})
-                  : Platform.isAndroid
-                      ? Container(
-                          margin: EdgeInsets.symmetric(horizontal: 4),
-                          child: IconButton(
-                              onPressed: () {}, icon: Icon(Icons.send)),
-                        )
-                      : Container(
-                          margin: EdgeInsets.symmetric(horizontal: 4),
-                          child: IconButton(
-                              onPressed: () {}, icon: Icon(Icons.send_rounded)),
-                        ))
-        ],
-      ),
-    ));
-  }
-
-  _handleSubmit(String text) {
-    print("text " + text);
-    _focusNode.requestFocus();
-    _textController.clear();
   }
 }

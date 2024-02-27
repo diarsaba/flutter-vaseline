@@ -12,16 +12,13 @@ void showDialogSimple(
     context: context,
     builder: (BuildContext context) => AlertDialog(
       title: Text(message),
-      content: SizedBox(
-        height: 150,
-        child: Text(
+      content: Text(
           description,
           style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               fontStyle: FontStyle.italic),
         ),
-      ),
       actions: <Widget>[
         TextButton(
             onPressed: () {

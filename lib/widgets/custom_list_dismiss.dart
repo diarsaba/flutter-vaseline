@@ -1,4 +1,3 @@
-import 'package:chatest/widgets/custom_card_chapter.dart';
 import 'package:flutter/material.dart';
 
 class ListDismiss extends StatelessWidget {
@@ -10,6 +9,8 @@ class ListDismiss extends StatelessWidget {
   final Function(int index) onLeft;
   final List<dynamic> list;
   final Function(int index) childIndex;
+  final DismissDirection direction;
+  final bool reverse;
 
   const ListDismiss({
     super.key,
@@ -18,7 +19,7 @@ class ListDismiss extends StatelessWidget {
     required this.onRight,
     required this.onLeft,
     required this.list, 
-    required this.childIndex,
+    required this.childIndex, required this.direction, required this.reverse,
   });
 
   @override
@@ -47,6 +48,7 @@ class ListDismiss extends StatelessWidget {
             ],
           ),
           key: UniqueKey(),
+          direction: direction,
           // direction: (textController.text.isEmpty
           //     ? DismissDirection.horizontal
           //     : DismissDirection.startToEnd),
@@ -61,6 +63,7 @@ class ListDismiss extends StatelessWidget {
         );
       },
       itemCount: list.length,
+      reverse: reverse,
     );
   }
 
